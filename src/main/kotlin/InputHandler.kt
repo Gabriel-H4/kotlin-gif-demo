@@ -1,72 +1,63 @@
-class InputHandler(private val store: Store2) {
+class InputHandler(private val store: Store) {
 
-    private enum class ParseSystem {
-        NUMERICAL, ALPHANUMERICAL, BOOLEAN
+    private var doLoop = true
+
+    private fun greet() {
+        println("""
+                --------------------------
+                --- Welcome to GIF 9.0 ---
+                -- Developed by Gabriel --
+                --------------------------
+                """.trimIndent())
     }
 
-    private fun requestHandler(input: String, context: ParseSystem) {
-        if(context == ParseSystem.NUMERICAL) {
-            val userInputConverted = input.toIntOrNull()?.also { selection ->
-                when(selection) {
-                    0 -> println(store.allToteIDs.joinToString())
-                    1 -> TODO("Order Numbers not yet implemented")
-                    2 -> TODO("Order Numbers not yet implemented")
-                    3 -> TODO("Customer Array not yet implemented")
-                    4 -> println(store.assignToteID())
-                    5 -> TODO("Remove deprecated option")
-                    8 -> greet()
-                    9 -> leave()
-                    100 -> genDebugInfo()
-                    else -> {
-                        println("Invalid number specified")
-                    }
-                }
-            } ?: run {
-                println("Invalid input: Only choose a number")
+    private fun leave() {
+        println("""
+                --------------------------
+                -----  Goodbye now!  -----
+                --------    :)    --------
+                --------------------------
+                """.trimIndent())
+        doLoop = false
+    }
+
+    private fun mainMenu() {
+        println("""
+            
+                Select an option:
+                1. View all Tote IDs
+                2. View all Active OSNs
+                3. View all Past OSNs
+                4. Get customer info
+                5. Generate OSN
+                6. Generate Tote ID
+                7.
+                8. Greet
+                9. Exit
+                100. genDebugInfo
+                """.trimIndent())
+        when(getInt(readln())) {
+            1 -> println(store.allToteIDs.joinToString())
+            2 -> println(store.getOSNFromPredicate(false).joinToString())
+            3 -> println(store.getOSNFromPredicate(true).joinToString())
+            // TODO("Modify hard-coded false predicate below to be user-input Boolean")
+            4 -> {
+                println("Only show past customers? true / false")
+                println(store.getCustomerList(getBool(readln())).joinToString("").trimIndent())
+            }
+            5 -> println(store.assignOSN())
+            6 -> println(store.assignToteID())
+            8 -> greet()
+            9 -> leave()
+            100 -> genDebugInfo()
+            else -> {
+                println("Invalid number specified")
             }
         }
-        else if(context == ParseSystem.ALPHANUMERICAL) {
-            println("You input a String reply: $input")
-        }
-        else {
-            println("You input a Boolean reply: $input")
-        }
-    }
-
-    fun greet() {
-        println("--------------------------")
-        println("--- Welcome to GIF 9.0 ---")
-        println("-- Developed by Gabriel --")
-        println("--------------------------")
-    }
-
-    fun mainMenu() {
-        println("\nSelect an option: ")
-        println("0. View all Tote IDs")
-        println("1. View all Active Order Numbers")
-        println("2. View all Past Order Numbers")
-        println("3. Get customer info")
-        println("4. Generate Tote ID")
-        println("5. Migrate past orders")
-        println("8. Greet")
-        println("9. Exit")
-        println("100. genDebugInfo")
-        requestHandler(readln(), ParseSystem.NUMERICAL)
-    }
-
-    fun customerInfoMenu() {
-
-        requestHandler(readln(), ParseSystem.ALPHANUMERICAL)
-    }
-
-    fun leave() {
-        println("--------------------------")
-        println("-----  Goodbye now!  -----")
-        println("--------    :)    --------")
-        println("--------------------------")
     }
 
     private fun genDebugInfo() {
+
         println("--------------------------")
         println("----- Store # ${store.storeNumber} -------")
         println("----- Store Tote IDs -----")
@@ -75,7 +66,27 @@ class InputHandler(private val store: Store2) {
         println(store.getOrdersFromPredicate(false).joinToString("\n"))
         println("------ Past Orders -------")
         println(store.getOrdersFromPredicate(true).joinToString("\n"))
+        println("----- Generated OSN: -----")
+        println(store.assignOSN())
+        println("--- Generated Tote ID: ---")
+        println(store.assignToteID())
+
         println("--------------------------")
+    }
+
+    private fun getInt(input: String): Int {
+        return input.toIntOrNull() ?: 0
+    }
+
+    private fun getBool(input: String): Boolean {
+        return input.toBooleanStrictOrNull() ?: false
+    }
+
+    fun runLoop() {
+        greet()
+        while(doLoop) {
+            mainMenu()
+        }
     }
 
 }

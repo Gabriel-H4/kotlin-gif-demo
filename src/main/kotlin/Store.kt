@@ -1,71 +1,61 @@
 class Store {
 
     val storeNumber = 3505
-    var activeOrders = ArrayList<Order>()
-    var pastOrders = ArrayList<Order>()
+    var allOrders = ArrayList<Order>()
     var allToteIDs = ArrayList<Int>()
 
-    private fun genOrderNumber() : Int {
-        var num = 1000000
-        for(order in activeOrders) {
-            if(order.osn >= num) {
-                num = order.osn + 1
+    fun assignOSN(): Int {
+        var newOSN = 1010000
+        for(order in allOrders) {
+            if(order.osn >= newOSN) {
+                newOSN += 1
             }
         }
-        return num
+        return newOSN
     }
 
-    fun genToteID(): Int {
-        var id = 10000
-        while(allToteIDs.contains(id)) {
-            id = IntRange(10000, 99999).random()
-        }
-        allToteIDs.add(id)
-        println("Generated toteID: $id")
-        return id
-    }
-
-    fun migratePastOrders() {
-        activeOrders.forEach {
-            if(it.status == OrderStatus.DISPENSED || it.status == OrderStatus.CANCELLED) {
-                pastOrders.add(it)
+    fun assignToteID(): Int {
+        var newToteID = IntRange(10000, 99999).random()
+        for(toteID in allToteIDs) {
+            if(toteID >= newToteID) {
+                newToteID = IntRange(10000, 99999).random()
             }
         }
-        pastOrders.forEach {
-            if(activeOrders.contains(it)) {
-                activeOrders.remove(it)
+        allToteIDs.add(newToteID)
+        return newToteID
+    }
+
+    fun getOrdersFromPredicate(pastOnly: Boolean): ArrayList<Order> {
+        var result = ArrayList<Order>()
+        for(order in allOrders) {
+            if(pastOnly) {
+                if(!order.status.active) {
+                    result.add(order)
+                }
+            }
+            else {
+                if(order.status.active) {
+                    result.add(order)
+                }
             }
         }
+        return result
     }
 
-    private fun changeOrderStatus(order: Order, status: OrderStatus) {
-        val pos = activeOrders.indexOf(order)
-        if(pos > activeOrders.count() - 1 || pos < 0) {
-            println("Invalid position in activeOrders array")
+    fun getOSNFromPredicate(pastOnly: Boolean): ArrayList<Int> {
+        var result = ArrayList<Int>()
+        for(order in getOrdersFromPredicate(pastOnly)) {
+            result.add(order.osn)
         }
-        else {
-            activeOrders[pos].status = status
+        return result
+    }
+
+    fun getCustomerList(pastOnly: Boolean): ArrayList<Customer> {
+        var result = ArrayList<Customer>()
+        for(order in getOrdersFromPredicate(pastOnly)) {
+            result.add(order.customer)
         }
+        return result
     }
 
-    fun placeOrder(customer: Customer): Order {
-        val newOrder = Order(genOrderNumber(), customer)
-        newOrder.toteIDs.add(genToteID())
-        activeOrders.add(newOrder)
-        return newOrder
-    }
-
-    fun markOrderReady(order: Order) {
-        changeOrderStatus(order, OrderStatus.READY)
-    }
-
-    fun markOrderDispensed(order: Order) {
-        changeOrderStatus(order, OrderStatus.DISPENSED)
-        migratePastOrders()
-    }
-
-    fun markOrderCancelled(order: Order) {
-        changeOrderStatus(order, OrderStatus.CANCELLED)
-        migratePastOrders()
-    }
 }

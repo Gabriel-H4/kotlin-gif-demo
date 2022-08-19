@@ -42,7 +42,7 @@ class Store {
         return result
     }
 
-    fun getOSNFromPredicate(pastOnly: Boolean): ArrayList<Int> {
+    fun getOSNsFromPredicate(pastOnly: Boolean): ArrayList<Int> {
         var result = ArrayList<Int>()
         for(order in getOrdersFromPredicate(pastOnly)) {
             result.add(order.osn)
@@ -56,6 +56,15 @@ class Store {
             result.add(order.customer)
         }
         return result
+    }
+
+    fun getOrderFromOSN(osn: Int): Order? {
+        for(order in allOrders) {
+            if(osn == order.osn) {
+                return order
+            }
+        }
+        return null
     }
 
 }

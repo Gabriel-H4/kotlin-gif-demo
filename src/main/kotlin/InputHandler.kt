@@ -25,33 +25,38 @@ class InputHandler(private val store: Store) {
         println("""
             
                 Select an option:
+                --------------------------
                 1. View all Tote IDs
                 2. View all Active OSNs
                 3. View all Past OSNs
                 4. Get customer info
                 5. Generate OSN
                 6. Generate Tote ID
-                7.
+                7. Lookup Order using OSN
                 8. Greet
                 9. Exit
                 100. genDebugInfo
+                --------------------------
                 """.trimIndent())
         when(getInt(readln())) {
-            1 -> println(store.allToteIDs.joinToString())
-            2 -> println(store.getOSNFromPredicate(false).joinToString())
-            3 -> println(store.getOSNFromPredicate(true).joinToString())
-            // TODO("Modify hard-coded false predicate below to be user-input Boolean")
+            1 -> println("\n" + store.allToteIDs.joinToString())
+            2 -> println("\n" + store.getOSNsFromPredicate(false).joinToString())
+            3 -> println("\n" + store.getOSNsFromPredicate(true).joinToString())
             4 -> {
-                println("Only show past customers? true / false")
-                println(store.getCustomerList(getBool(readln())).joinToString("").trimIndent())
+                println("\nOnly show active customers? true / false")
+                println("\n" + store.getCustomerList(!getBool(readln())).joinToString("").trimIndent())
             }
-            5 -> println(store.assignOSN())
-            6 -> println(store.assignToteID())
+            5 -> println("\n" + store.assignOSN())
+            6 -> {
+                println("\n" + store.assignToteID())
+                store.allToteIDs.remove(store.allToteIDs.lastIndex)
+            }
+            7 -> println("\n" + store.getOrderFromOSN(getInt(readln())).toString())
             8 -> greet()
             9 -> leave()
             100 -> genDebugInfo()
             else -> {
-                println("Invalid number specified")
+                println("\nInvalid number specified")
             }
         }
     }
@@ -70,7 +75,7 @@ class InputHandler(private val store: Store) {
         println(store.assignOSN())
         println("--- Generated Tote ID: ---")
         println(store.assignToteID())
-
+        store.allToteIDs.remove(store.allToteIDs.lastIndex)
         println("--------------------------")
     }
 

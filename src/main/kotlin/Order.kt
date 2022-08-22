@@ -1,22 +1,22 @@
-class Order(val store: Store, val customer: Customer) {
+class Order(private val store: Store, val customer: Customer) {
 
     val osn = store.assignOSN()
-    var status = OrderStatus2.PENDING
-    var toteIDs = ArrayList<Int>()
+    var status = OrderStatus.PENDING
+    var totes = ArrayList<Tote>()
 
-    enum class OrderStatus2(val active: Boolean) {
+    enum class OrderStatus(val active: Boolean) {
         PENDING(true),
         READY(true),
         DISPENSED(false),
         CANCELLED(false)
     }
 
-    fun changeOrderStatus(newStatus: OrderStatus2) {
+    fun changeOrderStatus(newStatus: OrderStatus) {
         status = newStatus
     }
 
     fun addNewTote() {
-        toteIDs.add(store.assignToteID())
+        totes.add(Tote(store.assignToteID()))
     }
 
     override fun toString(): String {
@@ -24,7 +24,7 @@ class Order(val store: Store, val customer: Customer) {
         OSN: $osn
         Status: $status
         Customer: $customer
-        Tote IDs: ${toteIDs.joinToString()}
+        Totes: ${totes.joinToString("\n")}
                 """.trimIndent()
     }
 }

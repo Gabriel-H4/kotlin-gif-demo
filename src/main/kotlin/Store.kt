@@ -26,7 +26,7 @@ class Store {
     }
 
     fun getOrdersFromPredicate(pastOnly: Boolean): ArrayList<Order> {
-        var result = ArrayList<Order>()
+        val result = ArrayList<Order>()
         for(order in allOrders) {
             if(pastOnly) {
                 if(!order.status.active) {
@@ -43,7 +43,7 @@ class Store {
     }
 
     fun getOSNsFromPredicate(pastOnly: Boolean): ArrayList<Int> {
-        var result = ArrayList<Int>()
+        val result = ArrayList<Int>()
         for(order in getOrdersFromPredicate(pastOnly)) {
             result.add(order.osn)
         }
@@ -51,7 +51,7 @@ class Store {
     }
 
     fun getCustomerList(pastOnly: Boolean): ArrayList<Customer> {
-        var result = ArrayList<Customer>()
+        val result = ArrayList<Customer>()
         for(order in getOrdersFromPredicate(pastOnly)) {
             result.add(order.customer)
         }
@@ -62,6 +62,17 @@ class Store {
         for(order in allOrders) {
             if(osn == order.osn) {
                 return order
+            }
+        }
+        return null
+    }
+
+    fun getOrderFromToteID(toteID: Int): Order? {
+        for(order in allOrders) {
+            order.totes.forEach {
+                if(toteID == it.toteID) {
+                    return order
+                }
             }
         }
         return null

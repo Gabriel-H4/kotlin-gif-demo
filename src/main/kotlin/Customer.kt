@@ -1,7 +1,7 @@
 class Customer(private val name: String, private val tel: String) {
 
     fun getMyOrders(store: Store): ArrayList<Order> {
-        var myOrders = ArrayList<Order>()
+        val myOrders = ArrayList<Order>()
         for(order in store.allOrders) {
             if(order.customer == this) {
                 myOrders.add(order)

@@ -8,10 +8,10 @@ fun main() {
 
     carol.placeOrder(curStore)
     carol.placeOrder(curStore)
-    carol.getMyOrders(curStore)[0].changeOrderStatus(Order.OrderStatus2.DISPENSED)
+    carol.getMyOrders(curStore)[0].changeOrderStatus(Order.OrderStatus.DISPENSED)
     sterling.placeOrder(curStore)
-    sterling.getMyOrders(curStore)[0].changeOrderStatus(Order.OrderStatus2.CANCELLED)
-    carol.getMyOrders(curStore)[1].changeOrderStatus(Order.OrderStatus2.READY)
+    sterling.getMyOrders(curStore)[0].changeOrderStatus(Order.OrderStatus.CANCELLED)
+    carol.getMyOrders(curStore)[1].changeOrderStatus(Order.OrderStatus.READY)
 
 //    Generate 10 random Tote IDs for debug
 

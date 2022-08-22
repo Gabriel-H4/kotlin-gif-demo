@@ -33,8 +33,9 @@ class InputHandler(private val store: Store) {
                 5. Generate OSN
                 6. Generate Tote ID
                 7. Lookup Order using OSN
-                8. Greet
-                9. Exit
+                8. Lookup Order using Tote ID
+                80. Greet
+                90. Exit
                 100. genDebugInfo
                 --------------------------
                 """.trimIndent())
@@ -49,11 +50,13 @@ class InputHandler(private val store: Store) {
             5 -> println("\n" + store.assignOSN())
             6 -> {
                 println("\n" + store.assignToteID())
-                store.allToteIDs.remove(store.allToteIDs.lastIndex)
+                println("***** REMOVING ${store.allToteIDs[store.allToteIDs.lastIndex]} *****")
+                store.allToteIDs.removeAt(store.allToteIDs.lastIndex)
             }
             7 -> println("\n" + store.getOrderFromOSN(getInt(readln())).toString())
-            8 -> greet()
-            9 -> leave()
+            8 -> println("\n" + store.getOrderFromToteID(getInt(readln())).toString())
+            80 -> greet()
+            90 -> leave()
             100 -> genDebugInfo()
             else -> {
                 println("\nInvalid number specified")
@@ -75,7 +78,8 @@ class InputHandler(private val store: Store) {
         println(store.assignOSN())
         println("--- Generated Tote ID: ---")
         println(store.assignToteID())
-        store.allToteIDs.remove(store.allToteIDs.lastIndex)
+        println("***** REMOVING ${store.allToteIDs[store.allToteIDs.lastIndex]} *****")
+        store.allToteIDs.removeAt(store.allToteIDs.lastIndex)
         println("--------------------------")
     }
 
